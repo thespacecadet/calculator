@@ -3,26 +3,28 @@ class calculator {
     constructor() {
     }
 
+    //simple square function. never used
     sqrt(x) {
         return Math.sqrt(x)
     }
-
+    //percentage. we take two numbers. divide one with the other and multiply by 100. add % symbol after. this function cannot work with other functions!
     per(x, y) {
-        console.log(x)
-        console.log(y)
         let answer = (x / y) * 100
         answer = answer.toString()
         answer = answer + '%'
         return answer
     }
-
+    //ratio function finds the biggest common denominator of two numbers and divides both with it. this function cannot work with other functions!
     ratio(x, y) {
-        let smaller = 0
+        let smaller
+        // find the smaller number out of the two
         if (x > y) {
             smaller = y
         } else {
             smaller = x
         }
+
+        //start with smaller number and try and divide both numbers. if it doesnt work, decrease the number by one until it works
         for (let i = smaller; i > 0; i--) {
             if (x % i === 0 && y % i === 0) {
                 let first = x / i;
@@ -30,7 +32,10 @@ class calculator {
                 return first + ':' + second
             }
         }
+    }    calc(expression) {
+        return eval(expression)
     }
+
 }
 
 (function () {
@@ -40,14 +45,14 @@ class calculator {
     let buttons = document.querySelectorAll('.btn');
     let clear = document.querySelector('.btn-clear');
     let equal = document.querySelector('.btn-equal');
-    let percent = document.querySelector('.btn-perc');
+    // let percent = document.querySelector('.btn-perc');
     let square = document.querySelector('.btn-square');
     let pi = document.querySelector('.btn-pi');
-    let mod = document.querySelector('.btn-m');
-    let elevator = document.querySelector('.elevator');
-    let ratio = document.querySelector('.btn-rat');
+    // let mod = document.querySelector('.btn-m');
+    // let elevator = document.querySelector('.elevator');
+    // let ratio = document.querySelector('.btn-rat');
 
-
+    //adds symbols to screen
     buttons.forEach(function (button) {
         button.addEventListener('click', function (e) {
             let value = e.target.dataset.num;
@@ -57,25 +62,34 @@ class calculator {
     });
 
     equal.addEventListener("click", function (e) {
-        // let stringVal = screen.value.prototype.toString()
+
+        //change power sign to a symbol the eval function knows
         screen.value = screen.value.replace('^', '**')
+
+        //change pi symbol to the actual number
         screen.value = screen.value.replace('π', Math.PI)
+        //if colon found in screen value then calculate ratio
         if (screen.value.includes(':')) {
             let ratioindex = screen.value.indexOf(':');
             let firstIndex = screen.value.slice(0, ratioindex)
             let secondIndex = screen.value.slice(ratioindex + 1)
-
             screen.value = calculate.ratio(firstIndex, secondIndex)
-        } else if (screen.value.includes(' per ')) {
+
+        }
+        //if 'per' found on screen value, calculate percentage
+        else if (screen.value.includes(' per ')) {
             let ratioindex = screen.value.indexOf(' per ');
             let firstIndex = screen.value.slice(0, ratioindex)
             let secondIndex = screen.value.slice(ratioindex + 5)
             screen.value = calculate.per(firstIndex, secondIndex)
-        } else if (screen.value === '') {
+        }
+        //if screen value is empty string, write 'please enter' on the screen
+        else if (screen.value === '') {
             screen.value = "Please enter";
-        } else {
-
-            screen.value = eval(screen.value);
+        }
+        //if screen not empty, no colon and no 'per', then calculate normally
+        else {
+            screen.value = calculate.calc(screen.value);
         }
     });
 
@@ -83,6 +97,7 @@ class calculator {
         screen.value = "";
     });
 
+    //calculate square function
     square.addEventListener('click', function (e) {
         let num = parseFloat(screen.value);
         let squareValue = Math.sqrt(num);
